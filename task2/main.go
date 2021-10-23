@@ -18,25 +18,25 @@ var err error
 func askUserValues() {
 
 	for {
-START1:
+	START1:
 		fmt.Println("Enter 'a' side of the 1-st letter")
 		_, err = fmt.Scan(&letter1.SideA)
 		if err != nil {
 			goto START1
 		}
-START2:
+	START2:
 		fmt.Println("Enter 'b' side of  the 1-st letter")
 		_, err = fmt.Scan(&letter1.SideB)
 		if err != nil {
 			goto START2
 		}
-START3:
+	START3:
 		fmt.Println("Enter 'c' side of the 2-nd letter")
 		_, err = fmt.Scan(&letter2.SideA)
 		if err != nil {
 			goto START3
 		}
-START4:
+	START4:
 		fmt.Println("Enter 'd' side of the 2-nd letter")
 		_, err = fmt.Scan(&letter2.SideB)
 		if err != nil {
@@ -60,9 +60,9 @@ func compareLetters() {
 
 func askUserContinue() {
 	fmt.Println(`Would you like to continue the comparison? Enter "y" or "yes" to continue`)
-	fmt.Scanf("%v", &answer)
+	fmt.Scanf("%s", &answer)
 	if strings.ToLower(answer) == "y" || strings.ToLower(answer) == "yes" {
-		askUserValues()
+		main()
 	}
 	return
 }
