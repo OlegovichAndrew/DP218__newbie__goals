@@ -21,8 +21,7 @@ func checkParams()bool {
 	flag.IntVar(&low, "l", 0, "Lower value of range")
 	flag.IntVar(&high, "h", 0, "Higher value of range")
 	flag.Parse()
-	isInputOk := low > 0 && high > 0
-	return isInputOk
+	return low > 0 && high > 0
 }
 
 func fibo() {
@@ -42,9 +41,8 @@ func fibo() {
 func main()  {
 	if checkParams() {
 		fibo()
-	} else {
-		fmt.Println(instructions)
+		return
 	}
-
+	fmt.Println(instructions)
 }
 

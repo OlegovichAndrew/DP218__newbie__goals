@@ -17,17 +17,15 @@ const instructions = "----------------------------------------------------------
 func adoptFlags() bool {
 	flag.IntVar(&limit, "l", 0, "Upper limit for squares")
 	flag.Parse()
-	isNatural := limit > 0
-	return isNatural
+	return limit > 0
 }
 
 func main()  {
 	if adoptFlags(){
 		printNaturalNumbers()
-	} else {
-		fmt.Println(instructions)
+		return
 	}
-
+	fmt.Println(instructions)
 }
 
 func printNaturalNumbers() {
@@ -38,6 +36,7 @@ func printNaturalNumbers() {
 		}
 	}
 	fmt.Printf(strings.Join(result, ","))
+	fmt.Println()
 }
 
 
