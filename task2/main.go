@@ -15,7 +15,6 @@ type Letter struct {
 
 var letter1 Letter
 var letter2 Letter
-var answer string
 var err error
 
 func askUserValues() {
@@ -69,6 +68,7 @@ func compareLetters() {
 }
 
 func askUserContinue() {
+	var answer string
 	fmt.Println(`Would you like to continue the comparison? Enter "y" or "yes" to continue`)
 	fmt.Scanf("%s", &answer)
 	if strings.ToLower(answer) == "y" || strings.ToLower(answer) == "yes" {
