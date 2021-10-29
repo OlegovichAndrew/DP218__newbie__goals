@@ -46,7 +46,7 @@ func fibo(low, high int) string {
 
 func main() {
 	if checkParams() {
-		fibo(low, high)
+		fmt.Println(fibo(low, high))
 		return
 	}
 	fmt.Println(instructions)
