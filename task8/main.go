@@ -13,21 +13,27 @@ const instructions = "---------------------------------------\n" +
 	"Appropriate values are higher than 1\n" +
 	"---------------------------------------"
 
-var(
+var (
 	low, high int
 )
 
-func checkParams()bool {
+func checkParams() bool {
 	flag.IntVar(&low, "l", 0, "Lower value of range")
 	flag.IntVar(&high, "h", 0, "Higher value of range")
 	flag.Parse()
-	return low > 0 && high > 0
+	return low >= 0 && high > 0
 }
 
-func fibo() {
+func fibo(low, high int) string {
 	f1, f2, f3 := 0, 1, 1
 	var scope []string
-	for i := 0; f3 < high; i++{
+	if low == 0 {
+		scope = append(scope, "0", "1")
+	}
+	if low == 1 {
+		scope = append(scope, "1")
+	}
+	for i := 0; f3 < high; i++ {
 		f1 = f2
 		f2 = f3
 		f3 = f1 + f2
@@ -35,14 +41,13 @@ func fibo() {
 			scope = append(scope, fmt.Sprint(f3))
 		}
 	}
-	fmt.Printf(strings.Join(scope, ", "))
+	return strings.Join(scope, ", ")
 }
 
-func main()  {
+func main() {
 	if checkParams() {
-		fibo()
+		fibo(low, high)
 		return
 	}
 	fmt.Println(instructions)
 }
-
