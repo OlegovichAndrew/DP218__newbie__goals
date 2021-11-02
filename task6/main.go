@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -11,34 +10,35 @@ import (
 const instruction = `There is the program which analyzes tickets, and writes if the one is LUCKY.
 You have to enter the path to file where situated one of the keys: "moscow" or "piter"`
 
+var ticket, ticket2 = "044530", "356536"
+
 func main() {
-	input := readInput()
-	parameter := readFile(input)
+
+	file := os.Args[1]
+	parameter := readFile(file)
 
 	switch parameter {
 	case "moscow":
-		moscowAlgorythm()
+		luck := moscowAlgorythm(ticket)
+		if luck {
+			fmt.Printf("The ticket %s is lucky with Moscow counting\n", ticket)
+		} else {
+			fmt.Printf("The ticket %s is NOT lucky with Moscow counting\n", ticket)
+		}
 	case "piter":
-		piterAlgorythm()
+		luck := piterAlgorythm(ticket)
+		if luck {
+			fmt.Printf("The ticket %s is lucky with Piter counting\n", ticket)
+		} else {
+			fmt.Printf("The ticket %s is not lucky with Piter counting\n", ticket)
+		}
 	default:
 		fmt.Println("Can't run the program with this parameter")
 	}
 }
 
-func readInput() string {
-	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println(`enter the file path`)
-	scanner.Scan()
-	if scanner.Text() == "" {
-		fmt.Println(instruction)
-		readInput()
-	}
-	input := scanner.Text()
-	return input
-}
-
 func readFile(input string) string {
-	data, err := os.ReadFile("text.txt")
+	data, err := os.ReadFile("moscow.txt")
 	if err != nil {
 		fmt.Println(err)
 		return ""
@@ -47,9 +47,8 @@ func readFile(input string) string {
 	return parameter
 }
 
-func piterAlgorythm() {
+func piterAlgorythm(ticket string) bool {
 	var odd, even int64
-	ticket := "044530"
 	split := strings.Split(ticket, "")
 
 	for _, v := range split {
@@ -62,15 +61,14 @@ func piterAlgorythm() {
 	}
 
 	if odd == even {
-		fmt.Printf("The ticket %s is lucky with Piter counting\n", ticket)
-		return
+		return true
 	}
-	fmt.Printf("The ticket %s is not lucky with Piter counting\n", ticket)
+	return false
 }
 
-func moscowAlgorythm() {
+func moscowAlgorythm(ticket string) bool {
 	var left, right int64
-	ticket := "356536"
+
 	split := strings.Split(ticket, "")
 
 	for i, v := range split {
@@ -84,8 +82,7 @@ func moscowAlgorythm() {
 	}
 
 	if left == right {
-		fmt.Printf("The ticket %s is lucky with Moscow counting\n", ticket)
-		return
+		return true
 	}
-	fmt.Printf("The ticket %s is NOT lucky with Moscow counting\n", ticket)
+	return false
 }
