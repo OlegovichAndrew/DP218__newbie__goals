@@ -19,34 +19,33 @@ var (
 )
 
 func inputParams() bool {
-	flag.IntVar(&height, "h",0, "The height (int) of the chessboard" )
+	flag.IntVar(&height, "h", 0, "The height (int) of the chessboard")
 	flag.IntVar(&width, "w", 0, "The width (int) of the chessboard")
 	flag.Parse()
-	isInputOk := (height > 0 && width > 0)
-	return isInputOk
+	return height > 0 && width > 0
 }
 
-func createBoard()  {
+func createBoard(width, height int) []string {
+	result := make([]string, height)
 	for i := 0; i < height; i++ {
 		for j := 0; j < width; j++ {
-			if i % 2 == 0 && j % 2 == 0 || i % 2 != 0 && j % 2 != 0 {
-				fmt.Printf("%s", whiteSquare)
-			} else  {
-				fmt.Printf("%s", blackSquare)
+			if i%2 == 0 && j%2 == 0 || i%2 != 0 && j%2 != 0 {
+				result[i] = result[i] + whiteSquare
+			} else {
+				result[i] = result[i] + blackSquare
 			}
 		}
-		fmt.Printf("\n")
 	}
+	return result
 }
 
 func main() {
 	if inputParams() {
-		createBoard()§
+		board := createBoard(width, height)
+		for _, v := range board {
+			fmt.Println(v)
+		}
 	} else {
 		fmt.Println(instruction)
 	}
 }
-
-
-
-
