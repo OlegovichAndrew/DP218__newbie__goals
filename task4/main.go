@@ -9,24 +9,31 @@ import (
 )
 
 const instructions = `Program starts with command line.
-First mode start with 2 parameters: <path to file> <string to count>;
-Second mode start with 3 parameters: <path to file> <string to find> <string to write>`
+The first mode starts with 2 parameters: <path to file> <string to count>;
+The second mode starts with 3 parameters: <path to file> <string to find> <string to write>`
 
 func main() {
 	if len(os.Args) == 3 {
-		readAndCount(os.Args[1], os.Args[2])
+		count, err := readAndCount(os.Args[1], os.Args[2])
+		if err != nil {
+			fmt.Printf("Error was happened: %v", err)
+		}
+		fmt.Printf("The text includs the desired string %d times\n", count)
 	} else if len(os.Args) == 4 {
-		rewriteString(os.Args[1], os.Args[2], os.Args[3])
+		err := rewriteString(os.Args[1], os.Args[2], os.Args[3])
+		if err != nil {
+			fmt.Printf("Error happened: %v", err)
+		}
 	} else {
 		fmt.Printf("%s\n", instructions)
 	}
 }
 
-func readAndCount(file, stringToFind string) {
+func readAndCount(file, stringToFind string) (int, error) {
 	var counter int
 	fileData, err := os.Open(file)
 	if err != nil {
-		fmt.Println(err)
+		return 0, err
 	}
 	defer fileData.Close()
 
@@ -37,47 +44,39 @@ func readAndCount(file, stringToFind string) {
 		counter += strings.Count(line, stringToFind)
 
 		if err == io.EOF {
-			break
+			return counter, nil
 		} else if err != nil {
-			fmt.Println("Error was happened: ", err)
-			break
+			return 0, err
 		}
 	}
-	fmt.Printf("The text includs the desired string %d times\n", counter)
-	return
 }
 
-func rewriteString(file, stringToFind, stringToWrite string) {
+func rewriteString(file, stringToFind, stringToWrite string) error {
+	fmt.Println("Search started...")
 	content, err := os.ReadFile(file)
 	if err != nil {
-		fmt.Errorf("error happened %q", err)
-		return
+		return err
 	}
 
 	newContent := string(content)
 	newContent = strings.Replace(newContent, stringToFind, stringToWrite, -1)
 	temp, err := os.Create("temp.txt")
-	if err != nil {
-		fmt.Errorf("error happened %q", err)
-		return
-	}
 
+	if err != nil {
+		return err
+	}
 	_, err = temp.WriteString(newContent)
 	if err != nil {
-		fmt.Errorf("error happened %q", err)
-		return
+		return err
 	}
-
 	err = os.Remove("file.txt")
 	if err != nil {
-		fmt.Errorf("error happened %q", err)
-		return
+		return err
 	}
-
 	err = os.Rename("temp.txt", "file.txt")
 	if err != nil {
-		fmt.Errorf("error happened %q", err)
-		return
+		return err
 	}
-	fmt.Printf("String was edited\n")
+	fmt.Printf("Search and replace finished\n")
+	return nil
 }
