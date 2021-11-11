@@ -15,7 +15,7 @@ func TestInputOperations(t *testing.T) {
 		{
 			input:       "2223fdsf232",
 			expected:    []string{},
-			expectedErr: errors.New("use only numbers in input"),
+			expectedErr: errors.New("your input is not correct"),
 		},
 		{
 			input:       "2223232543543543321",
@@ -86,7 +86,7 @@ func TestAddToThree(t *testing.T) {
 	}
 }
 
-func TestLogic(t *testing.T) {
+func TestGivePieceNames(t *testing.T) {
 	testTable := []struct {
 		input    string
 		expected string
@@ -110,7 +110,7 @@ func TestLogic(t *testing.T) {
 	}
 
 	for _, testCase := range testTable {
-		result := logic(testCase.input)
+		result := givePieceNames(testCase.input)
 		t.Logf("Calling func with: %s, got result: %v ", testCase.input, result)
 
 		if result != testCase.expected {
@@ -119,7 +119,7 @@ func TestLogic(t *testing.T) {
 	}
 }
 
-func TestLogicThousand(t *testing.T) {
+func TestGiveThousandPiecesNames(t *testing.T) {
 
 	testTable := []struct {
 		input    string
@@ -152,7 +152,7 @@ func TestLogicThousand(t *testing.T) {
 	}
 
 	for _, testCase := range testTable {
-		result := logicThousand(testCase.input)
+		result := giveThousandPiecesNames(testCase.input)
 		t.Logf("Calling func with: %s, got result: %v ", testCase.input, result)
 
 		if result != testCase.expected {

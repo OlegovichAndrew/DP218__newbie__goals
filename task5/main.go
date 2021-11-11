@@ -9,6 +9,12 @@ import (
 	"strconv"
 )
 
+const instructions = `------------------------------------
+The program prints word description for numbers you have written.
+In range 0 - 999.999.999.999.999
+Example: 5432 - пять тысяч четыреста тридцать два
+------------------------------------`
+
 var (
 	tillTwenty = map[string]string{
 		"0":  "",
@@ -60,48 +66,56 @@ var (
 
 func userInput(r io.Reader) (string, error) {
 	scanner := bufio.NewScanner(r)
-	if scanner.Scan() {
-		input := scanner.Text()
-		return input, nil
+	fmt.Println("Write down a number in range 0 - 999.999.999.999.999")
+	scanner.Scan()
+	input := scanner.Text()
+	if len(input) == 0 {
+		fmt.Println(instructions)
+		os.Exit(0)
 	}
-	return "", scanner.Err()
+	return input, nil
 }
 
-// The next function devides input into pieces, depends on it length. It should be comfortable to work next.
+// The next function divides input into pieces, depends on it length. It should be comfortable to work next.
+// Example: [000 456 789 784 012]
 
 func inputOperations(input string) ([]string, error) {
 	var forRead []string
 	_, err := strconv.Atoi(input)
 	if err != nil {
-		return forRead, errors.New("use only numbers in input")
+		return forRead, errors.New("your input is not correct")
 	}
-	// "empty" is a string to fill the slice till 5 elements
+	// "empty" is a string for fill the slice till 5 elements
 	empty := "000"
 
 	switch {
-	case len(input) >= 1 && len(input) <= 3: // 0-999 hundred
+	case len(input) >= 1 && len(input) <= 3:
 		piece1 := input
 		forRead = append(forRead, empty, empty, empty, empty, piece1)
 		return forRead, nil
-	case len(input) >= 4 && len(input) <= 6: // 1.000 - 999.999 thousand
+
+	case len(input) >= 4 && len(input) <= 6:
 		piece1 := input[len(input)-3:]
 		piece2 := input[:len(input)-3]
 		forRead = append(forRead, empty, empty, empty, piece2, piece1)
 		return forRead, nil
-	case len(input) >= 7 && len(input) <= 9: // 1.000.000 - 999.999.999 million
+
+	case len(input) >= 7 && len(input) <= 9:
 		piece1 := input[len(input)-3:]
 		piece2 := input[len(input)-6 : len(input)-3]
 		piece3 := input[:len(input)-6]
 		forRead = append(forRead, empty, empty, piece3, piece2, piece1)
 		return forRead, nil
-	case len(input) >= 10 && len(input) <= 12: // 1.000.000.000 - 999.999.999.999 billion
+
+	case len(input) >= 10 && len(input) <= 12:
 		piece1 := input[len(input)-3:]
 		piece2 := input[len(input)-6 : len(input)-3]
 		piece3 := input[len(input)-9 : len(input)-6]
 		piece4 := input[:len(input)-9]
 		forRead = append(forRead, empty, piece4, piece3, piece2, piece1)
 		return forRead, nil
-	case len(input) >= 13 && len(input) <= 15: // 1.000.000.000.000 - 999.999.999.999.999 trillion
+
+	case len(input) >= 13 && len(input) <= 15:
 		piece1 := input[len(input)-3:]
 		piece2 := input[len(input)-6 : len(input)-3]
 		piece3 := input[len(input)-9 : len(input)-6]
@@ -115,6 +129,8 @@ func inputOperations(input string) ([]string, error) {
 }
 
 // The next function adds zeros if length lesser than 3
+// Example: Had [1] -> got [001]
+
 func addToThree(piece string) string {
 	chunk := piece
 	if len(chunk) == 2 {
@@ -126,7 +142,7 @@ func addToThree(piece string) string {
 	return chunk
 }
 
-func logic(piece string) string {
+func givePieceNames(piece string) string {
 	var toWrite string
 	chunk := piece
 	chunk = addToThree(chunk)
@@ -143,15 +159,19 @@ func logic(piece string) string {
 	return toWrite
 }
 
-func logicThousand(piece string) string {
+// the same but for thousands
+// Example: 21 - двадцать один. But for thousands - двадцать одна
+func giveThousandPiecesNames(piece string) string {
 	tillTwenty["1"] = "одна "
 	tillTwenty["2"] = "две "
-	result := logic(piece)
+	result := givePieceNames(piece)
 	tillTwenty["1"] = "один "
 	tillTwenty["2"] = "два "
 	return result
 }
 
+// gives ending male numbers
+// Example: миллиард, миллиардА, миллиардОВ.
 func addEnding(piece string) string {
 	chunk := piece
 	chunk = addToThree(chunk)
@@ -194,19 +214,19 @@ func completePieces(input []string) string {
 		return result
 	}
 	if input[0] != "000" && input[0] != "00" && input[0] != "0" {
-		result += logic(input[0]) + "триллион" + addEnding(input[0])
+		result += givePieceNames(input[0]) + "триллион" + addEnding(input[0])
 	}
 	if input[1] != "000" && input[1] != "00" && input[1] != "0" {
-		result += logic(input[1]) + "миллиард" + addEnding(input[1])
+		result += givePieceNames(input[1]) + "миллиард" + addEnding(input[1])
 	}
 	if input[2] != "000" && input[2] != "00" && input[2] != "0" {
-		result += logic(input[2]) + "миллион" + addEnding(input[2])
+		result += givePieceNames(input[2]) + "миллион" + addEnding(input[2])
 	}
 	if input[3] != "000" && input[3] != "00" && input[3] != "0" {
-		result += logicThousand(input[3]) + "тысяч" + addEndingThousand(input[3])
+		result += giveThousandPiecesNames(input[3]) + "тысяч" + addEndingThousand(input[3])
 	}
 	if input[4] != "000" {
-		result += logic(input[4])
+		result += givePieceNames(input[4])
 	}
 	return result
 }

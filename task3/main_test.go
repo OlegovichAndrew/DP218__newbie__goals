@@ -46,15 +46,15 @@ func TestPrepareInput(t *testing.T) {
 		},
 		{
 			input:       "case3, 18, 30, 40, 60, 20",
-			expectedErr: errors.New("wrong number of arguments"),
+			expectedErr: errors.New("wrong number of arguments\n"),
 		},
 		{
 			input:       "case4, 3, side , 8",
-			expectedErr: errors.New("wrong side value"),
+			expectedErr: errors.New("wrong side value\n"),
 		},
 		{
 			input:       "case5, 5, 7, 100",
-			expectedErr: errors.New(`can't build a triangle with inputted values'`),
+			expectedErr: errors.New(`can't build a triangle with inputted values`),
 		},
 	}
 
@@ -100,4 +100,48 @@ func TestFormulaHeron(t *testing.T) {
 			t.Errorf("Expected area: %f, got %f", testCase.expectedArea, area)
 		}
 	}
+}
+
+func TestAddToMap(t *testing.T) {
+	var testTable = []struct {
+		err      error
+		name     string
+		area     float64
+		expected map[string]float64
+	}{
+		{
+			err:      errors.New("some error"),
+			name:     "some name",
+			area:     500,
+			expected: map[string]float64{},
+		},
+		{
+			err:      nil,
+			name:     "first",
+			area:     450.5,
+			expected: map[string]float64{"first": 450.5},
+		},
+		{
+			err:      nil,
+			name:     "second",
+			area:     245.5454,
+			expected: map[string]float64{"first": 450.5, "second": 245.5454},
+		},
+	}
+
+	for _, testCase := range testTable {
+		result := addToMap(testCase.name, testCase.area, testCase.err)
+		t.Logf("Fucntion calling with args: %v, %v, %v, got the result: %v", testCase.name, testCase.area, testCase.err, result)
+
+		if !reflect.DeepEqual(result, testCase.expected) {
+			t.Errorf("Test failed. Expected: %v, but got: %v", testCase.expected, result)
+		}
+	}
+}
+
+func Test_main(t *testing.T) {
+	osArgsPrevious := os.Args
+	defer func() { os.Args = osArgsPrevious }()
+	os.Args = []string{"TestMain, 30, 35,40"}
+	main()
 }

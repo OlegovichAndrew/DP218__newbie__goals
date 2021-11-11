@@ -13,24 +13,12 @@ import (
 )
 
 const instructions = `---------------------------------------------------------------------
-You should write parameters in the next order: <name>, <side>, <side>, <side>
-Then program will calculate the result for the triangle.
-You can add triangles as much as you want one after another.
-In progress program will ask your confirmation.
-Finally it shows the list of triangles in a sorted order`
+The program calculates the area of triangles and prints them from most to least.
+Write parameters in the next order: <name>, <side>, <side>, <side> 
+You can add triangles as much as you want. One after another. 
+---------------------------------------------------------------------`
 
 var triangleList = make(map[string]float64)
-
-func main() {
-	input := userInput(os.Stdin)
-	name, area, err := formulaHeron(prepareInput(input))
-	triangleList = addToSlice(name, area, err)
-	if askUserContinue() {
-		main()
-		return
-	}
-	printResult(triangleList)
-}
 
 func userInput(r io.Reader) string {
 	scanner := bufio.NewScanner(r)
@@ -48,7 +36,7 @@ func userInput(r io.Reader) string {
 func prepareInput(input string) (string, float64, float64, float64, error) {
 	result := strings.Split(input, ",")
 	if len(result) != 4 {
-		return "", 0, 0, 0, errors.New("wrong number of arguments")
+		return "", 0, 0, 0, errors.New("wrong number of arguments\n")
 	}
 
 	name := strings.ToLower(strings.TrimSpace(result[0]))
@@ -57,26 +45,28 @@ func prepareInput(input string) (string, float64, float64, float64, error) {
 	c, err3 := strconv.ParseFloat(strings.TrimSpace(result[3]), 64)
 
 	if err1 != nil || err2 != nil || err3 != nil {
-		return name, 0, 0, 0, errors.New("wrong side value")
+		return "", 0, 0, 0, errors.New("wrong side value\n")
 	}
 
 	if a+b > c && a+c > b && b+c > a { // проверка на то, образуется ли треугольник с данными сторонами
 		return name, a, b, c, nil
 	}
-	return "", a, b, c, errors.New(`can't build a triangle with inputted values'`)
+
+	return "", a, b, c, errors.New(`can't build a triangle with inputted values`)
 }
 
 func formulaHeron(name string, a, b, c float64, err error) (string, float64, error) {
 	if err != nil {
-		fmt.Print("Error!: ", err)
+		fmt.Print("Error: ", err)
 		return "", 0, err
 	}
+
 	p := (a + b + c) / 2
 	area := math.Round((math.Sqrt(p*(p-a)*(p-b)*(p-c)))*100) / 100
 	return name, area, nil
 }
 
-func addToSlice(name string, area float64, err error) map[string]float64 {
+func addToMap(name string, area float64, err error) map[string]float64 {
 	if err != nil {
 		return triangleList
 	}
@@ -101,9 +91,12 @@ func askUserContinue() bool {
 func printResult(triangleList map[string]float64) {
 	names := make(map[float64][]string)
 	var values []float64
+
+	//separate names and values, for comfortable access to names
 	for k, v := range triangleList {
 		names[v] = append(names[v], k)
 	}
+	// separate floats for sorting
 	for k := range names {
 		values = append(values, k)
 	}
@@ -116,4 +109,15 @@ func printResult(triangleList map[string]float64) {
 			fmt.Printf("%d. [Triangle %s]: %.2f cm2\n", i+1, s, k)
 		}
 	}
+}
+
+func main() {
+	input := userInput(os.Stdin)
+	name, area, err := formulaHeron(prepareInput(input))
+	triangleList = addToMap(name, area, err)
+	if askUserContinue() {
+		main()
+		return
+	}
+	printResult(triangleList)
 }
