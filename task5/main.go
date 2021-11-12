@@ -71,7 +71,7 @@ func userInput(r io.Reader) (string, error) {
 	input := scanner.Text()
 	if len(input) == 0 {
 		fmt.Println(instructions)
-		os.Exit(0)
+		return "", errors.New("your input is empty")
 	}
 	return input, nil
 }
@@ -81,10 +81,14 @@ func userInput(r io.Reader) (string, error) {
 
 func inputOperations(input string) ([]string, error) {
 	var forRead []string
-	_, err := strconv.Atoi(input)
+	negative, err := strconv.Atoi(input)
 	if err != nil {
 		return forRead, errors.New("your input is not correct")
 	}
+	if negative < 0 {
+		return forRead, errors.New("negative numbers are not supported")
+	}
+
 	// "empty" is a string for fill the slice till 5 elements
 	empty := "000"
 

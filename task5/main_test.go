@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -252,4 +253,11 @@ func TestCompletePieces(t *testing.T) {
 		}
 	}
 
+}
+
+func Test_main(t *testing.T) {
+	osArgsPrevious := os.Args
+	defer func() { os.Args = osArgsPrevious }()
+	os.Args = []string{"2353454"}
+	main()
 }
