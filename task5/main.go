@@ -16,6 +16,8 @@ Example: 5432 - пять тысяч четыреста тридцать два
 ------------------------------------`
 
 var (
+	isNegative bool
+
 	tillTwenty = map[string]string{
 		"0":  "",
 		"1":  "один ",
@@ -81,12 +83,13 @@ func userInput(r io.Reader) (string, error) {
 
 func inputOperations(input string) ([]string, error) {
 	var forRead []string
-	negative, err := strconv.Atoi(input)
+	if input[0] == '-' {
+		isNegative = true
+		input = input[1:]
+	}
+	_, err := strconv.Atoi(input)
 	if err != nil {
 		return forRead, errors.New("your input is not correct")
-	}
-	if negative < 0 {
-		return forRead, errors.New("negative numbers are not supported")
 	}
 
 	// "empty" is a string for fill the slice till 5 elements
@@ -216,6 +219,9 @@ func completePieces(input []string) string {
 	if isZero == 0 {
 		result = "ноль"
 		return result
+	}
+	if isNegative {
+		result += "Минус "
 	}
 	if input[0] != "000" && input[0] != "00" && input[0] != "0" {
 		result += givePieceNames(input[0]) + "триллион" + addEnding(input[0])
