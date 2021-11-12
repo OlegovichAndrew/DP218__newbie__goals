@@ -11,7 +11,7 @@ import (
 
 const instructions = `------------------------------------
 The program prints word description for numbers you have written.
-In range 0 - 999.999.999.999.999
+In range from -999.999.999.999.999 to 999.999.999.999.999
 Example: 5432 - пять тысяч четыреста тридцать два
 ------------------------------------`
 
